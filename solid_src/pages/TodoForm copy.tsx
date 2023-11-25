@@ -18,14 +18,18 @@ export const TodoForm = () => {
   });
 
   const submit = () => {
+    if (formStore.disabled) {
+      return;
+    }
     const res = {
       ...(todo() || {}),
       description: formStore.description,
       title: formStore.title,
     };
-    console.log("res", res);
     res.id ? globalStore.editTodo(res) : globalStore.addTodo(res);
     navigate(-1);
+    console.log("res", res);
+    console.log('globalStore', globalStore)
   };
 
   return (
@@ -41,7 +45,10 @@ export const TodoForm = () => {
           updateFormStore("description", value)
         }
       />
-      <CellButton disabled={formStore.disabled} onClick={submit}>
+      <CellButton
+        // disabled={formStore.disabled}
+        onClick={submit}
+      >
         {todo() ? "Edit" : "Create"}
       </CellButton>
     </View>

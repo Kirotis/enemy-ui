@@ -1,4 +1,4 @@
-@import "/public/fonts/index.css";
+@import "../public/fonts/index.css";
 
 @keyframes eplileptic {
   0%,
@@ -37,6 +37,7 @@
   --main-font: Visitor;
   --header-font: Pixeloza;
   --min-cell-height: 50px;
+  --text-font-size: 6rem;
 }
 * {
   padding: 0;
@@ -47,7 +48,7 @@
   color: var(--secondary-color);
   font-family: var(--main-font, monospace);
   border: 0;
-  text-align: left;
+  outline: none;
 }
 
 body {
@@ -72,17 +73,15 @@ body {
     calc(var(--content-height) / var(--cell-count, 3))
   );
   min-height: var(--content-size);
-  font-size: var(--content-size);
-  width: 100%
-
-  /* font-size: min(max(16px, 25vw), var(--content-size)); */
-  /* white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis; */
+  font-size: min(var(--content-size), var(--text-font-size));
+  width: 100%;
+  display: flex;
+  align-items: center;
 }
 
 .cell.header {
   font-family: var(--header-font, monospace);
+  justify-content: center;
   text-align: center;
 }
 
@@ -95,6 +94,4 @@ body {
 button.cell:not(:disabled):active {
   animation-name: eplileptic;
   animation-duration: 0.5s;
-}
-button.cell:disabled {
 }

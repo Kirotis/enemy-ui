@@ -1,5 +1,5 @@
-import { createRoot } from "solid-js";
-import { createStore } from "solid-js/store";
+import { createMemo, createRoot } from "solid-js";
+import { createStore, produce } from "solid-js/store";
 
 interface ToDoItem {
   readonly id: number;
@@ -36,14 +36,25 @@ const defaultValue = {
 };
 
 export const globalStore = createRoot<GlobalStore>(() => {
+  let todoList: () => ToDoItem[];
   const [store, setStore] = createStore<ToDoStore>({
     todos: defaultValue,
     get todoList() {
-      return Object.entries<ToDoItem>(this.todos).map(([_, todo]) => todo);
+      return todoList?.() ?? [];
     },
   });
+  // lol https://www.solidjs.com/docs/latest/api#getters
+  todoList = createMemo(() =>
+    Object.entries<ToDoItem>(store.todos).map(([_, todo]) => todo)
+  );
 
-  const editTodo = (todo: ToDoItem) => setStore("todos", todo.id, todo);
+  const editTodo = (todo: ToDoItem) =>
+    setStore(
+      "todos",
+      produce((todos) => {
+        todos[todo.id] = todo;
+      })
+    );
 
   const addTodo = (todo: Omit<ToDoItem, "id" | "isComplited">) =>
     editTodo({
@@ -53,10 +64,20 @@ export const globalStore = createRoot<GlobalStore>(() => {
     });
 
   const deleteTodo = (id: ToDoItem["id"]) =>
-    setStore("todos", ({ [id]: _, ...todos }) => todos);
+    setStore(
+      "todos",
+      produce((todos) => {
+        delete todos[id];
+      })
+    );
 
   const toggleTodo = (id: ToDoItem["id"]) =>
-    setStore("todos", id, "isComplited", (isComplited) => !isComplited);
+    setStore(
+      "todos",
+      produce((todos) => {
+        todos[id].isComplited = !todos[id].isComplited;
+      })
+    );
 
   return {
     ...store,
