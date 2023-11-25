@@ -1,0 +1,100 @@
+@import "/public/fonts/index.css";
+
+@keyframes eplileptic {
+  0%,
+  10%,
+  20%,
+  30%,
+  40%,
+  50%,
+  60%,
+  70%,
+  80%,
+  90% {
+    background: var(--primary-color);
+    color: var(--default-color);
+  }
+  5%,
+  15%,
+  25%,
+  35%,
+  45%,
+  55%,
+  65%,
+  75%,
+  85%,
+  95% {
+    background: none;
+  }
+}
+
+:root {
+  --default-color: black;
+  --primary-color: red;
+  --secondary-color: white;
+  --content-height: 100vh;
+  --content-width: 100vw;
+  --main-font: Visitor;
+  --header-font: Pixeloza;
+  --min-cell-height: 50px;
+}
+* {
+  padding: 0;
+  margin: 0;
+  /* cursor: none; */
+  user-select: none;
+  background-color: var(--default-color);
+  color: var(--secondary-color);
+  font-family: var(--main-font, monospace);
+  border: 0;
+  text-align: left;
+}
+
+body {
+  min-height: var(--content-height);
+  min-width: var(--content-width);
+  overflow-x: hidden;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #00000000;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+}
+
+.cell {
+  --content-size: max(
+    var(--min-cell-height),
+    calc(var(--content-height) / var(--cell-count, 3))
+  );
+  min-height: var(--content-size);
+  font-size: var(--content-size);
+  width: 100%
+
+  /* font-size: min(max(16px, 25vw), var(--content-size)); */
+  /* white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; */
+}
+
+.cell.header {
+  font-family: var(--header-font, monospace);
+  text-align: center;
+}
+
+.cell.hoverable:focus,
+.cell.hoverable:hover {
+  background: var(--primary-color);
+  color: var(--default-color);
+}
+
+button.cell:not(:disabled):active {
+  animation-name: eplileptic;
+  animation-duration: 0.5s;
+}
+button.cell:disabled {
+}
