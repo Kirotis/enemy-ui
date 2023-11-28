@@ -6,7 +6,7 @@ import { Show } from "solid-js";
 export const TodoPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const todo = () => globalStore.todos[parseInt(id)];
+  const todo = () => globalStore.todos()[parseInt(id)];
   const isComplited = () =>
     todo().isComplited ? "Complited" : "NOT Complited";
   return (

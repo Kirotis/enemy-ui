@@ -7,7 +7,7 @@ export const TodoForm = () => {
   const [{ edit }] = useSearchParams();
   const navigate = useNavigate();
 
-  const todo = () => globalStore.todos[parseInt(edit)];
+  const todo = () => globalStore.todos()[parseInt(edit)];
 
   const [title, setTitle] = createSignal(todo()?.title || "");
   const [description, setDescription] = createSignal(todo()?.description || "");
@@ -18,12 +18,11 @@ export const TodoForm = () => {
       description: description(),
       title: title(),
     };
-    console.log("res", res);
     res.id ? globalStore.editTodo(res) : globalStore.addTodo(res);
     navigate(-1);
   };
 
-  const disabled = createMemo(() => !title() || !description())
+  const disabled = createMemo(() => !title() || !description());
 
   return (
     <View>

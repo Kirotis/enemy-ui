@@ -1,5 +1,4 @@
-import { createMemo, createRoot } from "solid-js";
-import { createStore, produce } from "solid-js/store";
+import { createEffect, createMemo, createRoot, createSignal } from "solid-js";
 
 interface ToDoItem {
   readonly id: number;
@@ -9,8 +8,8 @@ interface ToDoItem {
 }
 
 interface ToDoStore {
-  todos: Record<ToDoItem["id"], ToDoItem>;
-  todoList: ToDoItem[];
+  todos: () => Record<ToDoItem["id"], ToDoItem>;
+  todoList: () => ToDoItem[];
 }
 
 interface GlobalStore extends ToDoStore {
@@ -36,25 +35,17 @@ const defaultValue = {
 };
 
 export const globalStore = createRoot<GlobalStore>(() => {
-  let todoList: () => ToDoItem[];
-  const [store, setStore] = createStore<ToDoStore>({
-    todos: defaultValue,
-    get todoList() {
-      return todoList?.() ?? [];
-    },
-  });
-  // lol https://www.solidjs.com/docs/latest/api#getters
-  todoList = createMemo(() =>
-    Object.entries<ToDoItem>(store.todos).map(([_, todo]) => todo)
+  const [todos, setTodos] =
+    createSignal<Record<ToDoItem["id"], ToDoItem>>(defaultValue);
+  const todoList = createMemo(() =>
+    Object.entries<ToDoItem>(todos()).map(([_, todo]) => todo)
   );
 
   const editTodo = (todo: ToDoItem) =>
-    setStore(
-      "todos",
-      produce((todos) => {
-        todos[todo.id] = todo;
-      })
-    );
+    setTodos((todos) => ({
+      ...todos,
+      [todo.id]: todo,
+    }));
 
   const addTodo = (todo: Omit<ToDoItem, "id" | "isComplited">) =>
     editTodo({
@@ -64,23 +55,26 @@ export const globalStore = createRoot<GlobalStore>(() => {
     });
 
   const deleteTodo = (id: ToDoItem["id"]) =>
-    setStore(
-      "todos",
-      produce((todos) => {
-        delete todos[id];
-      })
-    );
+    setTodos(({ [id]: _, ...todos }) => todos);
 
   const toggleTodo = (id: ToDoItem["id"]) =>
-    setStore(
-      "todos",
-      produce((todos) => {
-        todos[id].isComplited = !todos[id].isComplited;
-      })
-    );
+    setTodos((todos) => {
+      const todo = todos[id];
+      if (!todo) {
+        return todos;
+      }
+      return {
+        ...todos,
+        [id]: {
+          ...todo,
+          isComplited: !todo.isComplited,
+        },
+      };
+    });
 
   return {
-    ...store,
+    todoList,
+    todos,
     editTodo,
     addTodo,
     deleteTodo,

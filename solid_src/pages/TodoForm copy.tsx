@@ -1,6 +1,5 @@
 import { useNavigate, useSearchParams } from "@solidjs/router";
 import { Cell, CellButton, Input, View } from "../components";
-import { createMemo, createSignal } from "solid-js";
 import { globalStore } from "../store";
 import { createStore } from "solid-js/store";
 
@@ -8,7 +7,7 @@ export const TodoForm = () => {
   const [{ edit }] = useSearchParams();
   const navigate = useNavigate();
 
-  const todo = () => globalStore.todos[parseInt(edit)];
+  const todo = () => globalStore.todos()[parseInt(edit)];
   const [formStore, updateFormStore] = createStore({
     title: todo()?.title || "",
     description: todo()?.description || "",
@@ -28,8 +27,6 @@ export const TodoForm = () => {
     };
     res.id ? globalStore.editTodo(res) : globalStore.addTodo(res);
     navigate(-1);
-    console.log("res", res);
-    console.log('globalStore', globalStore)
   };
 
   return (

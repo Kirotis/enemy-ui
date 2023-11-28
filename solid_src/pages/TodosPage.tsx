@@ -8,7 +8,7 @@ export const TodosPage = () => {
   return (
     <View>
       <Cell header>List</Cell>
-      <For each={globalStore.todoList}>
+      <For each={globalStore.todoList()}>
         {(todo) => {
           const info = `[${todo.isComplited ? "X" : "-"}] ${todo.title}`;
           return (
